@@ -19,7 +19,7 @@ vsce package
 
 ## 使用方法
 
-- 通过命令面板执行 `extension.displayCode`、`extension.getJumpingPage` 等命令
+- 通过命令面板执行 `extension.displayInit`、`extension.getJumpingPage` 等命令
 - 点击状态栏内容可弹出信息面板
 
 ## 已知问题

@@ -32,3 +32,22 @@ export function autoSplitLines(text: string, lineLength: number = 15): string {
   }
   return lines.join("\n");
 }
+
+// "viewsContainers": {
+//   "panel": [
+//     {
+//       "id": "scriptTxt",
+//       "title": "测试",
+//       "icon": "resources/book.svg"
+//     }
+//   ]
+// },
+// "views": {
+//   "scriptTxt": [
+//     {
+//       "id": "scriptTxtView",
+//       "name": "测试面板",
+//       "icon": "resources/book.svg"
+//     }
+//   ]
+// }

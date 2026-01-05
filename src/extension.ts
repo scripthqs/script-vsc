@@ -1,36 +1,51 @@
-import { commands, ExtensionContext, window, StatusBarItem, StatusBarAlignment } from "vscode";
+import { commands, ExtensionContext, window, StatusBarItem, StatusBarAlignment, OutputChannel } from "vscode";
 import * as book from "./libs/bkContext";
-import { ScriptTxtProvider, autoSplitLines } from "./libs/panelProvider";
 let statusBarContent: StatusBarItem;
 let settingButton: StatusBarItem;
+let pageButton: StatusBarItem;
 let books: book.Book;
+let outputChannel: OutputChannel;
 
 // window.setStatusBarMessage
 export function activate(context: ExtensionContext) {
-  const scriptTxtProvider = new ScriptTxtProvider();
-  window.registerTreeDataProvider("scriptTxtView", scriptTxtProvider);
+  outputChannel = window.createOutputChannel("script-txt");
 
   statusBarContent = window.createStatusBarItem(StatusBarAlignment.Right, 10);
   settingButton = window.createStatusBarItem(StatusBarAlignment.Right, 0);
   settingButton.text = "$(book)";
-  settingButton.tooltip = "设置分页";
-  settingButton.command = "extension.jumpToPage";
+  settingButton.tooltip = "分页数";
+  settingButton.command = "extension.changePageSize";
   settingButton.show();
+  pageButton = window.createStatusBarItem(StatusBarAlignment.Right, 5);
+  pageButton.text = "";
+  pageButton.tooltip = "跳转到";
+  pageButton.command = "extension.jumpToPage";
 
   books = new book.Book(context);
 
-  function updateContent(newText: string) {
+  function updateContent({ content, pageInfo }: { content: string; pageInfo: string }) {
+    // 去除多余空白
+    const noSpaceText = content.replace(/[\s\r\n]+/g, "");
     if (statusBarContent) {
-      statusBarContent.text = newText;
-      statusBarContent.command = "extension.changePageSize";
+      statusBarContent.text = noSpaceText;
       statusBarContent.show();
+      pageButton.text = pageInfo;
+      pageButton.show();
     }
-    scriptTxtProvider.setPanelContent(autoSplitLines(newText));
-    // 60 82944/87587
+    if (outputChannel) {
+      outputChannel.clear();
+      outputChannel.append(noSpaceText);
+    }
   }
 
-  let displayCode = commands.registerCommand("extension.displayCode", () => {
-    updateContent("初始化");
+  let displayInit = commands.registerCommand("extension.displayInit", () => {
+    updateContent({ content: "初始化", pageInfo: "" });
+    outputChannel.clear();
+    outputChannel.hide();
+  });
+
+  let showOutputPanel = commands.registerCommand("extension.showOutputPanel", () => {
+    outputChannel.show();
   });
 
   // 跳转页面
@@ -74,7 +89,7 @@ export function activate(context: ExtensionContext) {
     }
   });
 
-  context.subscriptions.push(displayCode, getJumpingPage, getNextPage, getPreviousPage, jumpToPage, changePageSize);
+  context.subscriptions.push(displayInit, getJumpingPage, getNextPage, getPreviousPage, jumpToPage, changePageSize, showOutputPanel);
 
   // 悬停显示内容
   // const hoverDisposable = languages.registerHoverProvider(["typescript", "javascript", "vue"], {

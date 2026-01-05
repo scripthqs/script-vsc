@@ -45,8 +45,8 @@
     },
     "commands": [
       {
-        "command": "extension.displayCode",
-        "title": "script-txt.DisplayCode"
+        "command": "extension.displayInit",
+        "title": "script-txt.displayInit"
       },
       {
         "command": "extension.getPreviousPage",
@@ -62,45 +62,31 @@
       },
       {
         "command": "extension.showOutputPanel",
-        "title": "显示内容到输出面板"
+        "title": "script-txt"
       }
     ],
     "keybindings": [
       {
         "command": "extension.getPreviousPage",
-        "key": "pageDown"
+        "key": "pagedown"
       },
       {
         "command": "extension.getNextPage",
-        "key": "pageUp"
+        "key": "pageup"
       },
       {
         "command": "extension.getJumpingPage",
         "key": "end"
       },
       {
-        "command": "extension.displayCode",
+        "command": "extension.displayInit",
         "key": "home"
+      },
+      {
+        "command": "extension.showOutputPanel",
+        "key": "pausebreak"
       }
-    ],
-    "viewsContainers": {
-      "panel": [
-        {
-          "id": "scriptTxt",
-          "title": "测试",
-          "icon": "resources/book.svg"
-        }
-      ]
-    },
-    "views": {
-      "scriptTxt": [
-        {
-          "id": "scriptTxtView",
-          "name": "测试面板",
-          "icon": "resources/book.svg"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

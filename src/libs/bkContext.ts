@@ -52,7 +52,7 @@ export class Book {
   }
 
   // 封装分页主流程
-  private getPageContent(type: "previous" | "next" | "curr" | number): string {
+  private getPageContent(type: "previous" | "next" | "curr" | number): { content: string; pageInfo: string } {
     // 只初始化 filePath，不再自动覆盖 page_size
     this.filePath = workspace.getConfiguration().get("scriptTxt.filePath") || "";
     const text = this.readFile();
@@ -68,7 +68,10 @@ export class Book {
     this.updatePage();
 
     const page_info = `${this.curr_page_number}/${this.page}`;
-    return text.substring(this.start, this.end) + "    " + page_info;
+    return {
+      content: text.substring(this.start, this.end),
+      pageInfo: page_info,
+    };
   }
 
   // 处理上一页、下一页、当前页逻辑
