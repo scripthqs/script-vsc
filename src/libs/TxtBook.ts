@@ -12,7 +12,6 @@ export class Book {
 
   constructor(extensionContext: ExtensionContext) {
     this.extensionContext = extensionContext;
-    // 初始化 page_size
     const is_english = <boolean>workspace.getConfiguration().get("scriptTxt.isEnglish");
     let configPageSize = workspace.getConfiguration().get<number>("scriptTxt.pageSize") || 50;
     this.page_size = is_english ? configPageSize * 2 : configPageSize;
