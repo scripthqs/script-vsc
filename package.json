@@ -3,6 +3,7 @@
   "displayName": "script-vsc",
   "description": "",
   "version": "0.0.1",
+  "publisher": "scripthqs",
   "engines": {
     "vscode": "^1.107.0"
   },
@@ -40,6 +41,11 @@
           "type": "string",
           "default": "",
           "description": " Absolute Path of TXT Format Novels"
+        },
+        "scriptTxt.folderPath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path of the folder"
         }
       }
     },

@@ -1,4 +1,14 @@
-import { commands, ExtensionContext, window, StatusBarItem, StatusBarAlignment, OutputChannel } from "vscode";
+import {
+  commands,
+  ExtensionContext,
+  window,
+  StatusBarItem,
+  StatusBarAlignment,
+  OutputChannel,
+  QuickPick,
+  QuickPickItem,
+  workspace,
+} from "vscode";
 import * as book from "./TxtBook";
 
 export class ScriptTxtExtension {
@@ -8,25 +18,28 @@ export class ScriptTxtExtension {
   private books: book.Book;
   private outputChannel: OutputChannel;
   private context: ExtensionContext;
+  private quickPick: QuickPick<QuickPickItem>;
 
   constructor(context: ExtensionContext) {
     this.context = context;
+
     this.outputChannel = window.createOutputChannel("script-txt");
 
     this.statusBarContent = window.createStatusBarItem(StatusBarAlignment.Right, 10);
+    this.statusBarContent.command = "extension.quickPick";
 
     this.settingButton = window.createStatusBarItem(StatusBarAlignment.Right, 0);
     this.settingButton.text = "$(book)";
-    this.settingButton.tooltip = "分页数";
     this.settingButton.command = "extension.changePageSize";
     this.settingButton.show();
 
     this.pageButton = window.createStatusBarItem(StatusBarAlignment.Right, 5);
     this.pageButton.text = "";
-    this.pageButton.tooltip = "跳转到";
     this.pageButton.command = "extension.jumpToPage";
 
     this.books = new book.Book(context);
+
+    this.quickPick = window.createQuickPick();
 
     this.registerCommands();
   }
@@ -87,6 +100,36 @@ export class ScriptTxtExtension {
       }
     });
 
-    this.context.subscriptions.push(displayInit, getJumpingPage, getNextPage, getPreviousPage, jumpToPage, changePageSize, showOutputPanel);
+    const quickPick = commands.registerCommand("extension.quickPick", async () => {
+      const fileNames = this.books.getFolderFileNames();
+      const items: QuickPickItem[] = fileNames.length > 0 ? fileNames.map((name) => ({ label: name })) : [{ label: "文件夹为空或未配置" }];
+      this.quickPick.items = items;
+      this.quickPick.show();
+
+      // 监听选择事件
+      const acceptDisposable = this.quickPick.onDidAccept(async () => {
+        const selected = this.quickPick.selectedItems[0];
+        if (selected && fileNames.includes(selected.label)) {
+          const folderPath = workspace.getConfiguration().get<string>("scriptTxt.folderPath") || "";
+          const filePath = `${folderPath}\\${selected.label}`;
+          await workspace.getConfiguration().update("scriptTxt.filePath", filePath, true);
+          await workspace.getConfiguration().update("scriptTxt.currPageNumber", 1, true);
+          this.books = new book.Book(this.context);
+          this.updateContent(this.books.getJumpingPage());
+        }
+        this.quickPick.hide();
+        acceptDisposable.dispose();
+      });
+    });
+    this.context.subscriptions.push(
+      displayInit,
+      getJumpingPage,
+      getNextPage,
+      getPreviousPage,
+      jumpToPage,
+      changePageSize,
+      showOutputPanel,
+      quickPick
+    );
   }
 }

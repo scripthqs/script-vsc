@@ -129,4 +129,23 @@ export class Book {
   getFullContent(): string {
     return this.readFile();
   }
+
+  getFolderFileNames(): string[] {
+    const folderPath = workspace.getConfiguration().get<string>("scriptTxt.folderPath") || "";
+    if (!folderPath) {
+      window.showWarningMessage("Please fill in the path of the folder");
+      return [];
+    }
+    try {
+      const files = fs.readdirSync(folderPath);
+      // 只返回 .txt 文件名，不包含子文件夹
+      return files.filter((file) => {
+        const fullPath = `${folderPath}\\${file}`;
+        return fs.statSync(fullPath).isFile() && file.toLowerCase().endsWith(".txt");
+      });
+    } catch (err) {
+      window.showErrorMessage(`读取文件夹失败: ${err}`);
+      return [];
+    }
+  }
 }
