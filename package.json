@@ -1,0 +1,125 @@
+{
+  "name": "script-vsc",
+  "displayName": "script-vsc",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.107.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "script-txt",
+      "type": "object",
+      "properties": {
+        "scriptTxt.currPageNumber": {
+          "type": "number",
+          "default": 1,
+          "description": "Pages of Current Novels (Support jumping)"
+        },
+        "scriptTxt.pageSize": {
+          "type": "number",
+          "default": 60,
+          "description": "Number of text per page"
+        },
+        "scriptTxt.isEnglish": {
+          "type": "boolean",
+          "default": false,
+          "description": "Is it an English book?"
+        },
+        "scriptTxt.lineBreak": {
+          "type": "string",
+          "default": " ",
+          "description": "Line Break Separation Symbol,Default a space"
+        },
+        "scriptTxt.filePath": {
+          "type": "string",
+          "default": "",
+          "description": " Absolute Path of TXT Format Novels"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "extension.displayCode",
+        "title": "script-txt.DisplayCode"
+      },
+      {
+        "command": "extension.getPreviousPage",
+        "title": "script-txt.PreviousBook"
+      },
+      {
+        "command": "extension.getNextPage",
+        "title": "script-txt.NextBook"
+      },
+      {
+        "command": "extension.getJumpingPage",
+        "title": "script-txt.JumpingBook"
+      },
+      {
+        "command": "extension.showOutputPanel",
+        "title": "显示内容到输出面板"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "extension.getPreviousPage",
+        "key": "pageDown"
+      },
+      {
+        "command": "extension.getNextPage",
+        "key": "pageUp"
+      },
+      {
+        "command": "extension.getJumpingPage",
+        "key": "end"
+      },
+      {
+        "command": "extension.displayCode",
+        "key": "home"
+      }
+    ],
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "scriptTxt",
+          "title": "测试",
+          "icon": "resources/book.svg"
+        }
+      ]
+    },
+    "views": {
+      "scriptTxt": [
+        {
+          "id": "scriptTxtView",
+          "name": "测试面板",
+          "icon": "resources/book.svg"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "build": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.107.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.48.1",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  },
+  "repository": {}
+}
